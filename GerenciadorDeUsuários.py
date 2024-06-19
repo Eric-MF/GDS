@@ -23,8 +23,12 @@ def VerificarUsuarios():
     Iniciar()
     #Cria tabela
     cur.execute("CREATE TABLE IF NOT EXISTS Usuarios (nome TEXT, simulados TEXT)")
-    cur.execute("SELECT oid, * FROM Usua
-                
+    cur.execute("SELECT oid, * FROM Usuarios")
+    Nomes = cur.fetchall()
+
+    return Nomes
+
+def AdicionarNome(Nome):
     Iniciar()
     
     #Cria tabela
