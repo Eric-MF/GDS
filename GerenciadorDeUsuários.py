@@ -22,25 +22,30 @@ def VerificarUsuarios():
     
     Iniciar()
     #Cria tabela
-    cur.execute("CREATE TABLE IF NOT EXISTS Usuarios (nome TEXT, simulados TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS Usuarios (nome TEXT)")
     cur.execute("SELECT oid, * FROM Usuarios")
     Nomes = cur.fetchall()
-
+    print(Nomes)
     return Nomes
 
 def AdicionarNome(Nome):
+    if Nome == "Nome Usuário":
+        return 0
+    
     Iniciar()
     
     #Cria tabela
-    cur.execute("CREATE TABLE IF NOT EXISTS Usuarios (nome TEXT, simulados TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS Usuarios (nome TEXT)")
     cur.execute("SELECT oid, * FROM Usuarios")
 
     Nomes = cur.fetchall()
-
-    Inserir = "INSERT INTO Usuarios VALUES ('" + Nome + "','Simulados')"
+    for nome in Nomes:
+        if nome[1] == Nome:
+            return 1
+    Inserir = "INSERT INTO Usuarios VALUES ('" + Nome + "')"
     cur.execute(Inserir)
     Fechar()
-    return
+    return 1
 
 
 
