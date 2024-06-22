@@ -33,3 +33,5 @@ def TelaInicial():
 
 #Chama o programa
 Gerenciador()
+
+ttk.BaseWidget()

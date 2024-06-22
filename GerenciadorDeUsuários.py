@@ -25,7 +25,6 @@ def VerificarUsuarios():
     cur.execute("CREATE TABLE IF NOT EXISTS Usuarios (nome TEXT)")
     cur.execute("SELECT oid, * FROM Usuarios")
     Nomes = cur.fetchall()
-    print(Nomes)
     return Nomes
 
 def AdicionarNome(Nome):
