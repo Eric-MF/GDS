@@ -6,14 +6,16 @@ import os
 #Limpa o terminal
 os.system('cls' if os.name == 'nt' else 'clear')
 
-#Cria instância do tk e envia para interface gráfica.
-root = tk.Tk()
-GerenciadorDeSimulados(root)
+
 
 
 #Define a ordem do processo principal.
 def Gerenciador():
-
+    #Cria instância do tk e envia para interface gráfica.
+    global root
+    global GerenciadorDeSimulados
+    root = tk.Tk()
+    GerenciadorDeSimulados(root)
     GerenciadorDeSimulados.__IniciarGerenciador__(root)
     TelaInicial()
     root.mainloop()
