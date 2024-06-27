@@ -1,6 +1,7 @@
 import tkinter as tk
 from InterfaceGrafica import *
 from GerenciadorDeUsuários import *
+import customtkinter as ctk
 
 import os
 #Limpa o terminal
@@ -14,7 +15,8 @@ def Gerenciador():
     #Cria instância do tk e envia para interface gráfica.
     global root
     global GerenciadorDeSimulados
-    root = tk.Tk()
+    root = ctk.CTk()
+
     GerenciadorDeSimulados(root)
     GerenciadorDeSimulados.__IniciarGerenciador__(root)
     TelaInicial()
@@ -35,5 +37,3 @@ def TelaInicial():
 
 #Chama o programa
 Gerenciador()
-
-ttk.BaseWidget()

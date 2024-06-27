@@ -3,6 +3,7 @@ import tkinter as ttk
 from GerenciadorDeUsuários import *
 from Simulados import *
 import math
+from customtkinter import *
 
 #Classe gerenciadora de interface.
 
@@ -25,18 +26,24 @@ class GerenciadorDeSimulados:
         #Cria a tela dentro da tela do programa
         root.title(NomeDoPrograma)  
         root.iconbitmap(CaminhoDoIcone)
-        root.state('zoomed')
         root.columnconfigure(0, weight=1)
         root.rowconfigure(1, weight=1)
+        root.after(0, lambda: root.wm_state('zoomed'))
+        #global app
+        #app = CTk()
 
         #Cria os frames do programa
         global menu
-        menu = ttk.Frame(root, name="menu")
+        menu = CTkFrame(root)
         menu.grid(column=0, row=0, columnspan=3)
-        ttk.Label(menu, text="Menu: ").grid(column=0,row=0)
+        CTkLabel(menu, text="Menu: ").grid(column=0,row=0)
         global tela
-        tela = ttk.Frame(root, name="tela")
+        tela = CTkFrame(root)
         tela.grid(column=0,row=1)
+        
+
+
+
         return
         ######################################################## 
     #Tela de adicionar novos usuários.
@@ -47,12 +54,12 @@ class GerenciadorDeSimulados:
         global usuario
         usuario = "Nome Usuário"
         #Adiciona campo para inserir texto à tela
-        e = Entry(tela)
+        e = CTkEntry(tela)
         e.grid(column=0,row=1)
         e.insert(0, "Nome Usuário")
 
         #Adiciona botão à tela
-        ttk.Button(tela, text="Enter", command=lambda: GDS.Voltar(e.get())).grid(column=0,row=2)
+        CTkButton(tela, text="Enter", command=lambda: GDS.Voltar(e.get())).grid(column=0,row=2)
         return
         ########################################################     
     def Voltar(Nome):
@@ -72,7 +79,7 @@ class GerenciadorDeSimulados:
         #Adiciona texto à tela
         usuarios = VerificarUsuarios()
 
-        listadeusuarios = ttk.Frame(tela, name="listadeusuarios")
+        listadeusuarios = CTkFrame(tela)
         listadeusuarios.grid(column=0, row=1)
 
         #Cria lista com apenas nomes de usuários
@@ -85,16 +92,15 @@ class GerenciadorDeSimulados:
         usuario_escolhido.set("Selecione o usuário")
         
 
-        ttk.OptionMenu(listadeusuarios, usuario_escolhido, *nome_usuarios).grid(column=1, row=1, pady=50)
+        CTkOptionMenu(master=listadeusuarios, variable=usuario_escolhido, values=nome_usuarios).grid(column=1, row=1,padx=100, pady=50)
 
 
 
         #Adiciona botão de enter à tela
-        ttk.Button(tela, text="Enter", command=lambda: GDS.EscolherSimulado(usuario_escolhido)).grid(column=0,row=2, pady=75)
+        CTkButton(tela, text="Enter", command=lambda: GDS.EscolherSimulado(usuario_escolhido)).grid(column=0,row=2, pady=25)
 
         #Muda para tela de adicionar novo usuário
-        ttk.Button(tela, text="Adicionar novo Usuário", command=lambda: GDS.AdicionarUsuario()).grid(column=0,row=3)
-
+        CTkButton(tela, text="Adicionar novo Usuário", command=lambda: GDS.AdicionarUsuario()).grid(column=0,row=3, pady=25)
 
         return  
     def EscolherSimulado(usuario_escolhido):
@@ -103,18 +109,25 @@ class GerenciadorDeSimulados:
         usuario = usuario_escolhido.get()
         GDS.Titulo(tela,usuario,0,0)
         listasimulados = VerificarSimulados(usuario)
-        
+        VerificarPorcentagem(usuario,"1")
 
         if listasimulados == []:
             GDS.TelaAdicionarSimulado()
         else:
             #Exibe Simulados
             GDS.Titulo(tela,"Lista de Simulados",0,0)
-            simulado_escolhido = ttk.StringVar(tela)
-            simulado_escolhido.set("Escolha o Simulado")
-            ttk.OptionMenu(tela, simulado_escolhido, *listasimulados).grid(column=0, row=1, pady=50)
-            ttk.Button(tela, text="+",command=lambda: GDS.TelaAdicionarSimulado()).grid(column=1,row=1)
-            ttk.Button(tela, text="Enter",command=lambda: GDS.TelaDoSimulado()).grid(column=0,row=3,columnspan=2)
+            n = 0
+            for simulado in listasimulados:
+                Porcentagem = VerificarPorcentagem(usuario,simulado[0])
+                Texto = "Nº: "+str(n+1)+" | Banca: " + simulado[1] + " | Orgão: "+simulado[2]+" | Cargo: "+simulado[3]+" | Acerto: " +Porcentagem
+                CTkLabel(master= tela, text=Texto).grid(column=0, row=n+1)
+                n += 1
+                
+            
+            
+            CTkButton(tela, text="+",command=lambda: GDS.TelaAdicionarSimulado()).grid(column=1,row=0, padx=20, pady=10)
+            CTkButton(tela, text="<",command=lambda: GDS.EscolherUsuario()).grid(column=1,row=1, padx=20)
+
 
         #Adiciona botões "Adicionar Simulado" e "Enter"
 
@@ -128,9 +141,9 @@ class GerenciadorDeSimulados:
         GDS.LimparJanela(tela)
         GDS.Titulo(tela,"Adicionar Simulado",0,0,2)
         InfoSimulado=["Banca", "Orgão", "Cargo"]
-        simulados = ttk.Frame(tela, name="simulados")
+        simulados = CTkFrame(tela)
         simulados.grid(column=1,row=1)
-        textos = ttk.Frame(tela, name="textos")
+        textos = CTkFrame(tela)
         textos.grid(column=0,row=1)
         n = 1
         ValoresObtidos = []
@@ -138,9 +151,9 @@ class GerenciadorDeSimulados:
             n = n + 1
             ValoresObtidos.append(GDS.Inserir(Info,"Nome do(a) "+Info,n,1,simulados))
             GDS.Inserir(Info,Info+":",n, 0, textos, "Texto")
-        Questões=GDS.Inserir("Equantidade", "70", n+1,1,simulados)
+        Questões=GDS.Inserir("Equantidade", "00", n+1,1,simulados)
         GDS.Inserir("Tquantidade", "Quantidade de questões:", n+1,0,textos, "Texto")
-        ttk.Button(tela, text="Enter",command=lambda: GDS.TelaDeRespostas(Questões,ValoresObtidos)).grid(column=0,row=3,columnspan=2)
+        CTkButton(tela, text="Enter",command=lambda: GDS.TelaDeRespostas(Questões,ValoresObtidos)).grid(column=0,row=3,columnspan=2)
         return
         ######################################################## 
     def TelaDoSimulado(usuario):
@@ -167,9 +180,9 @@ class GerenciadorDeSimulados:
         QMarcadas = []
         Titulo = GDS.Titulo(tela,"Insira suas RESPOSTAS:",1,0,int(NumQuestoes/10)*2)
         for n in range(1,NumQuestoes+1):
-            QMarcadas.append(GDS.Inserir(Nome = "Numeros"+str(n),Texto= "A",Linha = math.ceil((n-0.1)%10),Coluna=math.ceil(n/10)*2))
+            QMarcadas.append(GDS.Inserir(Nome = "Numeros"+str(n),Texto= "",Linha = math.ceil((n-0.1)%10),Coluna=math.ceil(n/10)*2))
             GDS.Inserir("Questão"+str(n),n,math.ceil((n-0.1)%10),(math.ceil(n/10)*2)-1,Tipo="Label")
-        Botao = ttk.Button(tela, text="Enter")
+        Botao = CTkButton(tela, text="Enter")
         Botao.grid(column=1,row=11,columnspan=int(NumQuestoes/10)*2)
         Botao.configure(command=lambda: GDS.TelaDeGabarito(Banca,Orgao,Cargo, NumQuestoes,QMarcadas,Titulo, Botao))
         return
@@ -181,7 +194,7 @@ class GerenciadorDeSimulados:
             LetrasMarcadas.append(questao.get())
         for questao in QMarcadas:
             questao.delete(0,END)
-            questao.insert(0,"B")
+            questao.insert(0,"")
         Botao.configure(text="Enter",command=lambda: GDS.SalvarSimulado(Banca,Orgao,Cargo, NumQuestoes,LetrasMarcadas,QMarcadas))
         return
         
@@ -195,7 +208,7 @@ class GerenciadorDeSimulados:
         GDS.EscolherUsuario()
         return
     def Titulo(Janela,Texto,Coluna, Linha, EspacoColuna = 1):
-        Titulo = ttk.Label(Janela,name="h1", text=Texto)
+        Titulo = CTkLabel(Janela, text=Texto)
         Titulo.grid(column=Coluna, row=Linha, columnspan = EspacoColuna)
         return Titulo
     def LimparJanela(Tela):
@@ -206,12 +219,12 @@ class GerenciadorDeSimulados:
         Nome = Nome.lower()
         match Tipo:
             case "Entry" | "Entrada":
-                e = Entry(Janela, name= Nome)
+                e = CTkEntry(Janela)
                 e.insert(0, Texto)
                 e.grid(column= Coluna,row= Linha)
                 return e
             case "Label" | "Texto":
-                l = Label(Janela, name= Nome, text=Texto)
+                l = CTkLabel(Janela, text=Texto)
                 l.grid(column= Coluna,row= Linha)
                 return l
                 
